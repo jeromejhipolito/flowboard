@@ -19,6 +19,8 @@ interface TaskEvent {
 let socketInstance: Socket | null = null;
 let refCount = 0;
 
+// NOTE: reconnection backoff is handled by socket.io client defaults (exponential
+// up to 5s). If we add collaborative cursors later this will need revisiting.
 function getSocket(token: string): Socket {
   if (!socketInstance) {
     socketInstance = io(WS_URL, {

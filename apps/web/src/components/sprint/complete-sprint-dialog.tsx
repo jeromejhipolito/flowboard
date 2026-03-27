@@ -46,10 +46,12 @@ export function CompleteSprintDialog({
     [sprints],
   );
 
-  // Derive task summary from board store
+  // Derive task summary from board store — only count tasks in this sprint
   const { doneCount, incompleteCount, incompleteTasks, totalCount, progressPct } =
     useMemo(() => {
-      const allTasks = Object.values(columns).flat();
+      const allTasks = Object.values(columns)
+        .flat()
+        .filter((t) => t.sprintId === sprint?.id);
       const done = allTasks.filter((t) => t.status === 'DONE');
       const incomplete = allTasks.filter((t) => t.status !== 'DONE');
       const total = allTasks.length;
@@ -61,7 +63,7 @@ export function CompleteSprintDialog({
         totalCount: total,
         progressPct: pct,
       };
-    }, [columns]);
+    }, [columns, sprint?.id]);
 
   const handleComplete = async () => {
     if (!sprint) return;

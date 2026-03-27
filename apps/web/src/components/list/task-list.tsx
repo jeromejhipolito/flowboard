@@ -1,7 +1,7 @@
 'use client';
 
 import { useMemo } from 'react';
-import { ChevronDown, ChevronRight, ArrowUp, ArrowDown } from 'lucide-react';
+import { ChevronDown, ChevronRight, ArrowUp, ArrowDown, Inbox } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import {
   TASK_STATUS_ORDER,
@@ -199,6 +199,16 @@ export function TaskList({
           </tr>
         </thead>
         <tbody>
+          {tasks.length === 0 && (
+            <tr>
+              <td colSpan={8} className="py-16 text-center">
+                <div className="flex flex-col items-center gap-2">
+                  <Inbox className="h-8 w-8 text-muted-foreground/40" />
+                  <p className="text-sm text-muted-foreground">No tasks found</p>
+                </div>
+              </td>
+            </tr>
+          )}
           {TASK_STATUS_ORDER.map((status) => {
             const statusTasks = grouped[status] ?? [];
             if (statusTasks.length === 0) return null;

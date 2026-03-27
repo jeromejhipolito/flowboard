@@ -67,6 +67,7 @@ model User {
   firstName String
   lastName  String
   avatarUrl String?
+  timezone  String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 

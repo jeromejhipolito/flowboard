@@ -18,6 +18,7 @@ interface User {
   firstName: string;
   lastName: string;
   avatarUrl?: string;
+  timezone?: string;
 }
 
 interface AuthState {

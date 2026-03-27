@@ -14,6 +14,9 @@ export class NotificationProcessor {
     private readonly eventEmitter: EventEmitter2,
   ) {}
 
+  // TODO: this retry logic is naive — if the job fails after 3 attempts it
+  // disappears. Need dead-letter queue or at least an alert. Low priority
+  // but will bite us in production.
   @Process()
   async handleNotification(job: Job<CreateNotificationParams>): Promise<void> {
     const { recipientId, actorId, type, resourceType, resourceId } = job.data;
@@ -34,6 +37,7 @@ export class NotificationProcessor {
               firstName: true,
               lastName: true,
               avatarUrl: true,
+              timezone: true,
             },
           },
         },

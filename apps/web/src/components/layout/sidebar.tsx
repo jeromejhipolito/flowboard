@@ -119,7 +119,7 @@ export function Sidebar({ className }: SidebarProps) {
         {workspaces && workspaces.length > 0 && (
           <>
             <div className="my-4 border-t border-border" />
-            <p className="mb-1 px-3 text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60">Workspaces</p>
+            <p className="mb-1 px-3 text-[11px] font-bold uppercase tracking-widest text-muted-foreground/80">Workspaces</p>
             <button
               onClick={() => setWorkspacesExpanded(!workspacesExpanded)}
               className="flex w-full items-center justify-between rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition-all duration-150 hover:bg-accent hover:text-foreground"
@@ -168,7 +168,7 @@ export function Sidebar({ className }: SidebarProps) {
             {currentWorkspaceSlug && workspaceLinks.length > 0 && (
               <>
                 <div className="my-2 border-t border-border" />
-                <p className="mb-1 px-3 text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60">Workspace</p>
+                <p className="mb-1 px-3 text-[11px] font-bold uppercase tracking-widest text-muted-foreground/80">Workspace</p>
                 {workspaceLinks.map((link) => (
                   <Link
                     key={link.href}
@@ -196,7 +196,7 @@ export function Sidebar({ className }: SidebarProps) {
                   onClick={() => setProjectsExpanded(!projectsExpanded)}
                   className="flex w-full items-center justify-between px-3 py-1"
                 >
-                  <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60">Projects</p>
+                  <p className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground/80">Projects</p>
                   <ChevronDown
                     className={cn(
                       'h-3 w-3 text-muted-foreground/60 transition-transform',

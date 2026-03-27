@@ -72,6 +72,7 @@ export class TasksService {
             firstName: true,
             lastName: true,
             avatarUrl: true,
+            timezone: true,
           },
         },
         reporter: {
@@ -81,6 +82,7 @@ export class TasksService {
             firstName: true,
             lastName: true,
             avatarUrl: true,
+            timezone: true,
           },
         },
       },
@@ -139,6 +141,7 @@ export class TasksService {
             firstName: true,
             lastName: true,
             avatarUrl: true,
+            timezone: true,
           },
         },
         labels: {
@@ -193,6 +196,7 @@ export class TasksService {
             firstName: true,
             lastName: true,
             avatarUrl: true,
+            timezone: true,
           },
         },
         reporter: {
@@ -202,6 +206,7 @@ export class TasksService {
             firstName: true,
             lastName: true,
             avatarUrl: true,
+            timezone: true,
           },
         },
         labels: {
@@ -280,6 +285,7 @@ export class TasksService {
             firstName: true,
             lastName: true,
             avatarUrl: true,
+            timezone: true,
           },
         },
         reporter: {
@@ -289,6 +295,7 @@ export class TasksService {
             firstName: true,
             lastName: true,
             avatarUrl: true,
+            timezone: true,
           },
         },
       },
@@ -361,6 +368,8 @@ export class TasksService {
 
     let finalPosition = position;
 
+    // FIXME: position gap threshold is hardcoded at 0.001. Should be a named constant.
+    // Rebalance triggers more often than expected on large boards.
     // Check if we need to rebalance (gap too small)
     if (tasksInColumn.length > 0) {
       const needsRebalance = tasksInColumn.some((t, i) => {
@@ -452,6 +461,7 @@ export class TasksService {
             firstName: true,
             lastName: true,
             avatarUrl: true,
+            timezone: true,
           },
         },
       },

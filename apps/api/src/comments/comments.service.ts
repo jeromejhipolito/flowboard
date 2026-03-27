@@ -53,6 +53,7 @@ export class CommentsService {
             firstName: true,
             lastName: true,
             avatarUrl: true,
+            timezone: true,
           },
         },
       },
@@ -113,6 +114,7 @@ export class CommentsService {
             firstName: true,
             lastName: true,
             avatarUrl: true,
+            timezone: true,
           },
         },
         replies: {
@@ -162,6 +164,7 @@ export class CommentsService {
             firstName: true,
             lastName: true,
             avatarUrl: true,
+            timezone: true,
           },
         },
       },

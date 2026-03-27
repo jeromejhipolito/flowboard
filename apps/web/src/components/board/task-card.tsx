@@ -52,7 +52,9 @@ export function TaskCard({ task, onClick, isDragOverlay, density = 'expanded', s
     ? `${task.assignee.firstName?.charAt(0) ?? ''}${task.assignee.lastName?.charAt(0) ?? ''}`.toUpperCase()
     : null;
 
-  const labels = task.labels?.slice(0, 3) ?? [];
+  const allLabels = task.labels ?? [];
+  const labels = allLabels.slice(0, 3);
+  const extraLabelCount = allLabels.length - 3;
   const commentCount = task._count?.comments ?? 0;
   const subtaskCount = task._count?.childTasks ?? 0;
 
@@ -88,10 +90,10 @@ export function TaskCard({ task, onClick, isDragOverlay, density = 'expanded', s
           }
         }}
       >
-        {/* Left priority accent bar */}
+        {/* Left priority accent bar — red tint when overdue */}
         <div
           className="absolute left-0 top-0 bottom-0 w-[3px] rounded-l-md"
-          style={{ backgroundColor: priorityColor }}
+          style={{ backgroundColor: isOverdue ? 'var(--color-destructive)' : priorityColor }}
         />
 
         <div className="flex items-center gap-2">
@@ -143,10 +145,10 @@ export function TaskCard({ task, onClick, isDragOverlay, density = 'expanded', s
         }
       }}
     >
-      {/* Left priority accent bar */}
+      {/* Left priority accent bar — red tint when overdue */}
       <div
         className="absolute left-0 top-0 bottom-0 w-[3px] rounded-l-lg"
-        style={{ backgroundColor: priorityColor }}
+        style={{ backgroundColor: isOverdue ? 'var(--color-destructive)' : priorityColor }}
       />
 
       {/* Title — single line truncated */}
@@ -156,7 +158,7 @@ export function TaskCard({ task, onClick, isDragOverlay, density = 'expanded', s
 
       {/* Labels — single row, no wrap, overflow hidden */}
       {labels.length > 0 && (
-        <div className="mt-1 flex gap-1 overflow-hidden">
+        <div className="mt-1 flex items-center gap-1 overflow-hidden">
           {labels.map((tl) => (
             <span
               key={tl.labelId}
@@ -166,6 +168,11 @@ export function TaskCard({ task, onClick, isDragOverlay, density = 'expanded', s
               {tl.label.name}
             </span>
           ))}
+          {extraLabelCount > 0 && (
+            <span className="shrink-0 inline-block rounded-full bg-muted px-1.5 py-0.5 text-[9px] font-medium text-muted-foreground">
+              +{extraLabelCount}
+            </span>
+          )}
         </div>
       )}
 

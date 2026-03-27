@@ -47,6 +47,7 @@ import {
   UserPlus,
   Loader2,
 } from 'lucide-react';
+import { ConfirmDialog } from '@/components/ui/confirm-dialog';
 
 const workspaceSettingsSchema = z.object({
   name: z.string().min(1, 'Name is required').max(100),
@@ -86,6 +87,9 @@ function WorkspaceDetailPageContent() {
   const [inviteModalOpen, setInviteModalOpen] = useState(false);
   const [createProjectModalOpen, setCreateProjectModalOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [deleteWorkspaceOpen, setDeleteWorkspaceOpen] = useState(false);
+  const [removeMemberOpen, setRemoveMemberOpen] = useState(false);
+  const [memberToRemove, setMemberToRemove] = useState<{ userId: string; name: string } | null>(null);
 
   // Determine current user's role in this workspace
   const currentMember = members?.find((m: any) => m.userId === user?.id);
@@ -129,19 +133,12 @@ function WorkspaceDetailPageContent() {
   };
 
   const handleDeleteWorkspace = async () => {
-    if (
-      !window.confirm(
-        'Are you sure you want to delete this workspace? This action cannot be undone.',
-      )
-    ) {
-      return;
-    }
-
     setIsDeleting(true);
     try {
       await api.delete(`/workspaces/${workspace?.id}`);
       queryClient.invalidateQueries({ queryKey: ['workspaces'] });
       toast.success('Workspace deleted');
+      setDeleteWorkspaceOpen(false);
       router.push('/workspaces');
     } catch (err: any) {
       toast.error(
@@ -166,19 +163,16 @@ function WorkspaceDetailPageContent() {
     }
   };
 
-  const handleRemoveMember = async (userId: string, memberName: string) => {
-    if (!workspace?.id) return;
-    if (
-      !window.confirm(`Remove ${memberName} from this workspace?`)
-    ) {
-      return;
-    }
+  const handleRemoveMemberConfirm = async () => {
+    if (!workspace?.id || !memberToRemove) return;
     try {
       await removeMember.mutateAsync({
         workspaceId: workspace.id,
-        userId,
+        userId: memberToRemove.userId,
       });
       toast.success('Member removed');
+      setRemoveMemberOpen(false);
+      setMemberToRemove(null);
     } catch (err: any) {
       toast.error(
         err.response?.data?.message || 'Failed to remove member',
@@ -425,12 +419,10 @@ function WorkspaceDetailPageContent() {
                                   <Button
                                     variant="ghost"
                                     size="icon"
-                                    onClick={() =>
-                                      handleRemoveMember(
-                                        member.userId,
-                                        memberName,
-                                      )
-                                    }
+                                    onClick={() => {
+                                      setMemberToRemove({ userId: member.userId, name: memberName });
+                                      setRemoveMemberOpen(true);
+                                    }}
                                   >
                                     <Trash2 className="h-4 w-4 text-destructive" />
                                   </Button>
@@ -535,12 +527,9 @@ function WorkspaceDetailPageContent() {
                   <CardContent>
                     <Button
                       variant="destructive"
-                      onClick={handleDeleteWorkspace}
+                      onClick={() => setDeleteWorkspaceOpen(true)}
                       disabled={isDeleting}
                     >
-                      {isDeleting && (
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      )}
                       <Trash2 className="mr-2 h-4 w-4" />
                       Delete Workspace
                     </Button>
@@ -576,6 +565,29 @@ function WorkspaceDetailPageContent() {
           />
         </>
       )}
+
+      <ConfirmDialog
+        open={deleteWorkspaceOpen}
+        onOpenChange={setDeleteWorkspaceOpen}
+        title="Delete Workspace"
+        description="Are you sure you want to delete this workspace? This action cannot be undone."
+        confirmLabel="Delete"
+        onConfirm={handleDeleteWorkspace}
+        isLoading={isDeleting}
+      />
+
+      <ConfirmDialog
+        open={removeMemberOpen}
+        onOpenChange={(open) => {
+          setRemoveMemberOpen(open);
+          if (!open) setMemberToRemove(null);
+        }}
+        title="Remove Member"
+        description={`Remove ${memberToRemove?.name ?? 'this member'} from this workspace?`}
+        confirmLabel="Remove"
+        onConfirm={handleRemoveMemberConfirm}
+        isLoading={removeMember.isPending}
+      />
     </div>
   );
 }

@@ -18,11 +18,13 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select } from '@/components/ui/select';
 import { useCreateTask } from '@/hooks/use-tasks';
+import { useAuth } from '@/hooks/use-auth';
 import {
   TASK_STATUS_OPTIONS,
   PRIORITY_OPTIONS,
   type TaskStatus,
 } from '@/lib/constants';
+import { DueDateTimezoneBreakdown } from '@/components/board/due-date-timezone';
 
 const createTaskSchema = z.object({
   title: z.string().min(1, 'Title is required').max(200, 'Title is too long'),
@@ -40,7 +42,7 @@ interface CreateTaskModalProps {
   onOpenChange: (open: boolean) => void;
   projectId: string;
   defaultStatus?: TaskStatus;
-  members?: { id: string; firstName: string; lastName: string }[];
+  members?: { id: string; firstName: string; lastName: string; timezone?: string }[];
 }
 
 export function CreateTaskModal({
@@ -51,11 +53,13 @@ export function CreateTaskModal({
   members = [],
 }: CreateTaskModalProps) {
   const createTask = useCreateTask();
+  const { user: currentUser } = useAuth();
 
   const {
     register,
     handleSubmit,
     reset,
+    watch,
     formState: { errors, isSubmitting },
   } = useForm<CreateTaskFormValues>({
     resolver: zodResolver(createTaskSchema),
@@ -180,6 +184,23 @@ export function CreateTaskModal({
               type="date"
               {...register('dueDate')}
             />
+            {(() => {
+              const watchedDueDate = watch('dueDate');
+              const watchedAssigneeId = watch('assigneeId');
+              const selectedMember = watchedAssigneeId
+                ? members.find((m) => m.id === watchedAssigneeId)
+                : undefined;
+              if (watchedDueDate && selectedMember) {
+                return (
+                  <DueDateTimezoneBreakdown
+                    dueDate={new Date(watchedDueDate).toISOString()}
+                    assignee={selectedMember}
+                    viewerTimezone={currentUser?.timezone}
+                  />
+                );
+              }
+              return null;
+            })()}
           </div>
 
           <DialogFooter>

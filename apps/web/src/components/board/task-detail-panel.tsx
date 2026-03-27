@@ -29,12 +29,15 @@ import { Select } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Skeleton } from '@/components/ui/skeleton';
+import { ConfirmDialog } from '@/components/ui/confirm-dialog';
 import { useTask, useUpdateTask, useDeleteTask, useCreateTask } from '@/hooks/use-tasks';
 import { useSprints } from '@/hooks/use-sprints';
 import { useTaskActivity } from '@/hooks/use-activity';
+import { useAuth } from '@/hooks/use-auth';
 import { useBoardStore } from '@/stores/board-store';
 import { ActivityFeed } from '@/components/activity/activity-feed';
 import { CommentSection } from '@/components/comments/comment-section';
+import { DueDateTimezoneBreakdown } from '@/components/board/due-date-timezone';
 
 interface TaskDetailPanelProps {
   taskId: string | null;
@@ -51,6 +54,7 @@ export function TaskDetailPanel({
 }: TaskDetailPanelProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { user: currentUser } = useAuth();
   const { data: task, isLoading } = useTask(taskId ?? '');
   const updateTask = useUpdateTask();
   const deleteTask = useDeleteTask();
@@ -63,6 +67,7 @@ export function TaskDetailPanel({
   const [isEditingDescription, setIsEditingDescription] = useState(false);
   const [newSubtaskTitle, setNewSubtaskTitle] = useState('');
   const [isAddingSubtask, setIsAddingSubtask] = useState(false);
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
 
   const titleInputRef = useRef<HTMLInputElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
@@ -164,13 +169,13 @@ export function TaskDetailPanel({
     [task, updateTask, updateBoardTask],
   );
 
-  const handleDelete = useCallback(async () => {
+  const handleDeleteConfirm = useCallback(async () => {
     if (!task) return;
-    if (!window.confirm('Are you sure you want to delete this task?')) return;
     try {
       await deleteTask.mutateAsync({ taskId: task.id, projectId });
       removeTask(task.id);
       toast.success('Task deleted');
+      setDeleteConfirmOpen(false);
       onClose();
     } catch {
       toast.error('Failed to delete task');
@@ -252,19 +257,19 @@ export function TaskDetailPanel({
             isOpen ? 'translate-x-0' : 'translate-x-full',
           )}
         >
-        {/* Close button always visible */}
-        <div className="flex items-center justify-end p-2 border-b border-border">
-          <Button variant="ghost" size="icon" onClick={onClose}>
-            <X className="h-5 w-5" />
-          </Button>
-        </div>
-
         {isLoading ? (
-          <div className="space-y-4 p-6">
-            <Skeleton variant="text" className="h-8 w-3/4" />
-            <Skeleton variant="text" className="h-5 w-full" />
-            <Skeleton variant="text" className="h-5 w-1/2" />
-            <Skeleton variant="card" className="h-40" />
+          <div className="p-6">
+            <div className="mb-4 flex justify-end">
+              <Button variant="ghost" size="icon" onClick={onClose}>
+                <X className="h-5 w-5" />
+              </Button>
+            </div>
+            <div className="space-y-4">
+              <Skeleton variant="text" className="h-8 w-3/4" />
+              <Skeleton variant="text" className="h-5 w-full" />
+              <Skeleton variant="text" className="h-5 w-1/2" />
+              <Skeleton variant="card" className="h-40" />
+            </div>
           </div>
         ) : task ? (
           <div className="flex h-full flex-col overflow-y-auto">
@@ -394,6 +399,13 @@ export function TaskDetailPanel({
                   <p className="text-xs font-medium text-destructive">
                     This task is overdue
                   </p>
+                )}
+                {task.dueDate && (
+                  <DueDateTimezoneBreakdown
+                    dueDate={task.dueDate}
+                    assignee={task.assignee ?? undefined}
+                    viewerTimezone={currentUser?.timezone}
+                  />
                 )}
               </div>
             </div>
@@ -549,17 +561,23 @@ export function TaskDetailPanel({
               <Button
                 variant="destructive"
                 size="sm"
-                onClick={handleDelete}
+                onClick={() => setDeleteConfirmOpen(true)}
                 disabled={deleteTask.isPending}
               >
-                {deleteTask.isPending ? (
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                ) : (
-                  <Trash2 className="mr-2 h-4 w-4" />
-                )}
+                <Trash2 className="mr-2 h-4 w-4" />
                 Delete Task
               </Button>
             </div>
+
+            <ConfirmDialog
+              open={deleteConfirmOpen}
+              onOpenChange={setDeleteConfirmOpen}
+              title="Delete Task"
+              description="Are you sure? This cannot be undone."
+              confirmLabel="Delete"
+              onConfirm={handleDeleteConfirm}
+              isLoading={deleteTask.isPending}
+            />
           </div>
         ) : (
           <div className="flex flex-1 items-center justify-center">

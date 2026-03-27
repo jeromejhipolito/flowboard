@@ -57,7 +57,7 @@ export default function ProjectLayout({
         </div>
 
         {/* Nav tabs */}
-        <div className="mt-3 flex gap-1">
+        <div className="mt-3 flex gap-1 border-b border-border">
           {navItems.map((item) => {
             const Icon = item.icon;
             const isActive = activeTab === item.value;
@@ -66,10 +66,10 @@ export default function ProjectLayout({
                 key={item.value}
                 onClick={() => navigateToTab(item.value)}
                 className={cn(
-                  'inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium transition-colors',
+                  'inline-flex items-center gap-1.5 px-3 py-1.5 text-sm transition-colors',
                   isActive
-                    ? 'bg-secondary text-foreground'
-                    : 'text-muted-foreground hover:bg-muted hover:text-foreground',
+                    ? 'text-primary border-b-2 border-primary font-semibold'
+                    : 'text-muted-foreground hover:text-foreground border-b-2 border-transparent',
                 )}
               >
                 <Icon className="h-4 w-4" />

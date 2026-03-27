@@ -153,7 +153,7 @@ export function NotificationPanel({ open, onClose }: NotificationPanelProps) {
               variant="ghost"
               size="sm"
               onClick={() => markAllAsRead.mutate()}
-              disabled={markAllAsRead.isPending}
+              disabled={markAllAsRead.isPending || isEmpty}
               className="text-xs"
             >
               <CheckCheck className="mr-1 h-3.5 w-3.5" />

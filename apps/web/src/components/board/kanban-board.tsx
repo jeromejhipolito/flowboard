@@ -218,6 +218,8 @@ export function KanbanBoard({ onTaskClick, onAddTask, searchQuery }: KanbanBoard
   }, []);
 
   return (
+    // NOTE: closestCorners collision detection struggles with empty columns.
+    // Tried closestCenter — worse. Leaving this with a note to revisit.
     <DndContext
       sensors={sensors}
       collisionDetection={closestCorners}

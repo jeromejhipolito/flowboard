@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { useAuth } from '@/hooks/use-auth';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
@@ -10,6 +11,7 @@ import { NotificationBell } from '@/components/notifications/notification-bell';
 import { ThemeToggle } from '@/components/theme-toggle';
 
 export function TopBar() {
+  const router = useRouter();
   const { user, logout } = useAuth();
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -52,7 +54,14 @@ export function TopBar() {
       {/* Right section */}
       <div className="flex items-center gap-2">
         {/* Mobile search icon */}
-        <Button variant="ghost" size="icon" className="md:hidden">
+        <Button
+          variant="ghost"
+          size="icon"
+          className="md:hidden"
+          onClick={() => {
+            window.dispatchEvent(new KeyboardEvent('keydown', { key: 'k', ctrlKey: true, bubbles: true }));
+          }}
+        >
           <Search className="h-5 w-5" />
         </Button>
 
@@ -90,14 +99,20 @@ export function TopBar() {
                 </p>
               </div>
               <button
-                onClick={() => setUserMenuOpen(false)}
+                onClick={() => {
+                  setUserMenuOpen(false);
+                  router.push('/settings');
+                }}
                 className="flex w-full items-center gap-2 px-4 py-2 text-sm text-foreground hover:bg-accent"
               >
                 <User className="h-4 w-4" />
                 Profile
               </button>
               <button
-                onClick={() => setUserMenuOpen(false)}
+                onClick={() => {
+                  setUserMenuOpen(false);
+                  router.push('/settings');
+                }}
                 className="flex w-full items-center gap-2 px-4 py-2 text-sm text-foreground hover:bg-accent"
               >
                 <Settings className="h-4 w-4" />

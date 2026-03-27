@@ -18,6 +18,7 @@ export interface DemoWorkspaceMember {
   lastName: string;
   role: string;
   avatarUrl?: string;
+  timezone?: string;
 }
 
 export const DEMO_WORKSPACE: DemoWorkspace = {
@@ -40,6 +41,7 @@ function toMember(user: DemoUser, role: string): DemoWorkspaceMember {
     lastName: user.lastName,
     role,
     avatarUrl: user.avatarUrl,
+    timezone: user.timezone,
   };
 }
 

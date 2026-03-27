@@ -8,7 +8,7 @@ function Skeleton({ className, variant = 'text', ...props }: SkeletonProps) {
   return (
     <div
       className={cn(
-        'animate-pulse bg-muted',
+        'skeleton-shimmer',
         variant === 'text' && 'h-4 w-full rounded-md',
         variant === 'circle' && 'h-10 w-10 rounded-full',
         variant === 'card' && 'h-32 w-full rounded-lg',

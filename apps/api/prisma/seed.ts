@@ -17,6 +17,7 @@ async function main() {
         firstName: 'Jerome',
         lastName: 'Admin',
         avatarUrl: null,
+        timezone: 'Asia/Manila',
       },
     }),
     prisma.user.create({
@@ -26,6 +27,7 @@ async function main() {
         firstName: 'Sarah',
         lastName: 'Developer',
         avatarUrl: null,
+        timezone: 'America/New_York',
       },
     }),
     prisma.user.create({
@@ -35,6 +37,7 @@ async function main() {
         firstName: 'Mike',
         lastName: 'Designer',
         avatarUrl: null,
+        timezone: 'America/Los_Angeles',
       },
     }),
     prisma.user.create({
@@ -44,6 +47,7 @@ async function main() {
         firstName: 'Anna',
         lastName: 'Manager',
         avatarUrl: null,
+        timezone: 'Europe/London',
       },
     }),
     prisma.user.create({
@@ -53,6 +57,7 @@ async function main() {
         firstName: 'Guest',
         lastName: 'Viewer',
         avatarUrl: null,
+        timezone: 'America/Chicago',
       },
     }),
   ]);

@@ -59,7 +59,7 @@ export function KanbanColumn({
       <div
         ref={setNodeRef}
         className={cn(
-          'flex h-full w-[48px] min-w-[48px] flex-col items-center overflow-hidden rounded-lg border border-border bg-muted/40 dark:bg-card/60 transition-colors duration-200',
+          'flex h-full w-[48px] min-w-[48px] flex-col items-center overflow-hidden rounded-lg border border-border bg-accent/60 dark:bg-card/60 transition-colors duration-200',
           highlighted && 'bg-primary/5 ring-2 ring-primary/20',
         )}
       >
@@ -99,7 +99,7 @@ export function KanbanColumn({
   }
 
   return (
-    <div className="flex h-full w-[280px] min-w-[280px] flex-col overflow-hidden rounded-lg border border-border bg-muted/40 dark:bg-card/60">
+    <div className="flex h-full w-[280px] min-w-[280px] flex-col overflow-hidden rounded-lg border border-border bg-accent/60 dark:bg-card/60">
       {/* Colored top accent bar */}
       <div
         className="h-[3px] w-full"
@@ -153,11 +153,19 @@ export function KanbanColumn({
 
         {/* Empty state / drop hint */}
         {tasks.length === 0 && (
-          <div className="flex flex-1 items-center justify-center rounded-md border-2 border-dashed border-border py-8 text-center">
-            <p className="text-xs text-muted-foreground">
-              Drop tasks here
-            </p>
-          </div>
+          highlighted ? (
+            <div className="flex flex-1 items-center justify-center rounded-md border-2 border-dashed border-primary/40 py-8 text-center">
+              <p className="text-xs text-primary font-medium">
+                Drop here
+              </p>
+            </div>
+          ) : (
+            <div className="flex flex-1 items-center justify-center py-8 text-center">
+              <p className="text-xs text-muted-foreground">
+                No tasks
+              </p>
+            </div>
+          )
         )}
       </div>
 

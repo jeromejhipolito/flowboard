@@ -50,6 +50,7 @@ export class NotificationsService {
             firstName: true,
             lastName: true,
             avatarUrl: true,
+            timezone: true,
           },
         },
       },

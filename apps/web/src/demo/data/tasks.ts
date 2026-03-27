@@ -19,6 +19,7 @@ export interface DemoTaskUser {
   firstName: string;
   lastName: string;
   avatarUrl?: string;
+  timezone?: string;
 }
 
 export interface DemoTask {
@@ -47,7 +48,7 @@ export interface DemoTask {
 
 function user(id: string): DemoTaskUser {
   const u = DEMO_USERS.find((u) => u.id === id)!;
-  return { id: u.id, email: u.email, firstName: u.firstName, lastName: u.lastName, avatarUrl: u.avatarUrl };
+  return { id: u.id, email: u.email, firstName: u.firstName, lastName: u.lastName, avatarUrl: u.avatarUrl, timezone: u.timezone };
 }
 
 function label(taskId: string, labelId: string): DemoTaskLabel {
@@ -195,10 +196,10 @@ const coreInProgress: DemoTask[] = [
     description: 'Build a reusable date range picker for the analytics dashboard. Use react-day-picker under the hood.',
     status: 'IN_PROGRESS',
     priority: 'MEDIUM',
-    assigneeId: 'demo-user-2',
+    assigneeId: 'demo-user-2',  // Samantha (New York, UTC-4)
     reporterId: 'demo-user-1',
     position: 2000,
-    dueDate: '2026-03-27T23:59:59.000Z',
+    dueDate: '2026-03-28T03:59:00.000Z',  // Mar 27 11:59 PM EDT / Mar 28 11:59 AM PHT — crosses day boundary
     storyPoints: 5,
     completedAt: null,
     createdAt: '2026-03-17T09:30:00.000Z',
@@ -237,10 +238,10 @@ const coreInProgress: DemoTask[] = [
     description: 'Tests intermittently fail due to shared database state. Isolate with per-test transactions and fix token mocking.',
     status: 'IN_PROGRESS',
     priority: 'HIGH',
-    assigneeId: 'demo-user-3',
+    assigneeId: 'demo-user-3',  // Marcus (Los Angeles, UTC-7)
     reporterId: 'demo-user-3',
     position: 4000,
-    dueDate: '2026-03-26T23:59:59.000Z',
+    dueDate: '2026-03-27T06:59:00.000Z',  // Mar 26 11:59 PM PDT / Mar 27 2:59 PM PHT — crosses day boundary
     storyPoints: 3,
     completedAt: null,
     createdAt: '2026-03-17T14:00:00.000Z',
@@ -325,10 +326,10 @@ const coreInReview: DemoTask[] = [
     description: 'Implement sliding window rate limiter using Redis. Default: 100 req/min per API key, configurable per plan.',
     status: 'IN_REVIEW',
     priority: 'HIGH',
-    assigneeId: 'demo-user-3',
+    assigneeId: 'demo-user-3',  // Marcus (Los Angeles, UTC-7)
     reporterId: 'demo-user-1',
     position: 1000,
-    dueDate: '2026-03-26T23:59:59.000Z',
+    dueDate: '2026-03-27T06:59:00.000Z',  // Mar 26 11:59 PM PDT / Mar 27 2:59 PM PHT — crosses day boundary
     storyPoints: 5,
     completedAt: null,
     createdAt: '2026-03-17T09:00:00.000Z',

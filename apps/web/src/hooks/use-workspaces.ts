@@ -30,6 +30,7 @@ interface WorkspaceMember {
   lastName: string;
   role: string;
   avatarUrl?: string;
+  timezone?: string;
 }
 
 // Fetch all workspaces for the current user

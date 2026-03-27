@@ -19,6 +19,7 @@ export interface TaskUser {
   firstName: string;
   lastName: string;
   avatarUrl?: string;
+  timezone?: string;
 }
 
 export interface TaskLabel {
@@ -191,11 +192,8 @@ export function useMoveTask() {
       });
       return data as Task;
     },
-    onSuccess: (data) => {
-      queryClient.invalidateQueries({
-        queryKey: ['tasks', { projectId: data.projectId }],
-      });
-    },
+    // Don't invalidate on move — the optimistic update in the board store is already correct.
+    // Invalidating causes a refetch that briefly reverts the card position.
   });
 }
 
