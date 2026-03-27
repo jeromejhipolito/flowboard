@@ -1,0 +1,114 @@
+@import "tailwindcss";
+
+@theme {
+  --color-background: #f8f7ff;
+  --color-foreground: #0d0d1a;
+  --color-card: #ffffff;
+  --color-card-foreground: #0d0d1a;
+  --color-popover: #ffffff;
+  --color-popover-foreground: #0d0d1a;
+  --color-primary: #5b4ff5;
+  --color-primary-foreground: #ffffff;
+  --color-secondary: #f1f0fe;
+  --color-secondary-foreground: #0d0d1a;
+  --color-muted: #f4f3ff;
+  --color-muted-foreground: #6b7280;
+  --color-accent: #f0effe;
+  --color-accent-foreground: #0d0d1a;
+  --color-destructive: #e5343d;
+  --color-border: #e5e3fb;
+  --color-ring: #5b4ff5;
+  --radius-sm: 0.25rem;
+  --radius-md: 0.375rem;
+  --radius-lg: 0.5rem;
+
+  --gradient-primary: linear-gradient(135deg, #5b4ff5 0%, #8b5cf6 100%);
+  --gradient-surface: linear-gradient(135deg, #f8f7ff 0%, #f0effe 100%);
+}
+
+.dark {
+  --color-background: #0c0c14;
+  --color-foreground: #f0efff;
+  --color-card: #14141f;
+  --color-card-foreground: #f0efff;
+  --color-popover: #1c1c2e;
+  --color-popover-foreground: #f0efff;
+  --color-primary: #7c6ff7;
+  --color-primary-foreground: #ffffff;
+  --color-secondary: #1a1929;
+  --color-secondary-foreground: #f0efff;
+  --color-muted: #1a1929;
+  --color-muted-foreground: #8b8aa0;
+  --color-accent: #1e1d2e;
+  --color-accent-foreground: #f0efff;
+  --color-destructive: #f87171;
+  --color-border: #2a2840;
+  --color-ring: #7c6ff7;
+
+  --gradient-primary: linear-gradient(135deg, #7c6ff7 0%, #a78bfa 100%);
+  --gradient-surface: linear-gradient(135deg, #0c0c14 0%, #14141f 100%);
+}
+
+/* Dark mode scrollbar */
+.dark ::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.dark ::-webkit-scrollbar-track {
+  background: #0c0c14;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: #2a2840;
+  border-radius: 4px;
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: #3a3860;
+}
+
+/* Page entrance animation */
+@keyframes slide-up-fade {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-enter {
+  animation: slide-up-fade 0.5s ease-out both;
+}
+
+.animate-enter-delay-1 {
+  animation-delay: 0.05s;
+}
+
+.animate-enter-delay-2 {
+  animation-delay: 0.1s;
+}
+
+.animate-enter-delay-3 {
+  animation-delay: 0.15s;
+}
+
+.animate-enter-delay-4 {
+  animation-delay: 0.2s;
+}
+
+.animate-enter-delay-5 {
+  animation-delay: 0.25s;
+}
+
+/* Respect reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  .animate-enter {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+}

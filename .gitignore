@@ -1,0 +1,33 @@
+# Dependencies
+node_modules/
+
+# Build
+dist/
+.next/
+out/
+
+# Environment
+.env
+.env.local
+.env.production
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Prisma
+apps/api/prisma/*.db
+
+# Docker volumes
+postgres-data/
+redis-data/
+
+# Logs
+*.log
+
+# Coverage
+coverage/

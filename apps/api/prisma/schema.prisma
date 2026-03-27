@@ -1,0 +1,308 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─── Enums ──────────────────────────────────────────────────────────────────
+
+enum WorkspaceRole {
+  OWNER
+  ADMIN
+  MEMBER
+  VIEWER
+}
+
+enum ProjectStatus {
+  ACTIVE
+  ARCHIVED
+  COMPLETED
+}
+
+enum TaskStatus {
+  BACKLOG
+  TODO
+  IN_PROGRESS
+  IN_REVIEW
+  DONE
+}
+
+enum TaskPriority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+enum NotificationType {
+  TASK_ASSIGNED
+  TASK_STATUS_CHANGED
+  COMMENT_ADDED
+  MENTION
+  MEMBER_INVITED
+}
+
+enum AuditAction {
+  CREATED
+  UPDATED
+  DELETED
+  STATUS_CHANGED
+}
+
+enum SprintStatus {
+  PLANNING
+  ACTIVE
+  CLOSED
+}
+
+// ─── User ───────────────────────────────────────────────────────────────────
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  firstName String
+  lastName  String
+  avatarUrl String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  memberships    WorkspaceMembership[]
+  invitations    WorkspaceMembership[] @relation("InvitedByUser")
+  assignedTasks  Task[]                @relation("TaskAssignee")
+  reportedTasks  Task[]                @relation("TaskReporter")
+  comments       Comment[]
+  notifications  Notification[]        @relation("NotificationRecipient")
+  actedNotifs    Notification[]        @relation("NotificationActor")
+  auditLogs      AuditLog[]
+  timeEntries    TimeEntry[]
+
+  @@map("users")
+}
+
+// ─── Workspace ──────────────────────────────────────────────────────────────
+
+model Workspace {
+  id          String   @id @default(cuid())
+  name        String
+  slug        String   @unique
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  deletedAt   DateTime?
+
+  memberships WorkspaceMembership[]
+  projects    Project[]
+  labels      Label[]
+
+  @@map("workspaces")
+}
+
+// ─── Workspace Membership ───────────────────────────────────────────────────
+
+model WorkspaceMembership {
+  id          String        @id @default(cuid())
+  userId      String
+  workspaceId String
+  role        WorkspaceRole @default(MEMBER)
+  invitedById String?
+  invitedAt   DateTime      @default(now())
+  joinedAt    DateTime?
+
+  user        User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  workspace   Workspace  @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  invitedBy   User?      @relation("InvitedByUser", fields: [invitedById], references: [id])
+
+  @@unique([userId, workspaceId])
+  @@map("workspace_memberships")
+}
+
+// ─── Project ────────────────────────────────────────────────────────────────
+
+model Project {
+  id          String        @id @default(cuid())
+  workspaceId String
+  name        String
+  description String?
+  status      ProjectStatus @default(ACTIVE)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  deletedAt   DateTime?
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  tasks     Task[]
+  sprints   Sprint[]
+
+  @@map("projects")
+}
+
+// ─── Task ───────────────────────────────────────────────────────────────────
+
+model Task {
+  id           String       @id @default(cuid())
+  projectId    String
+  parentTaskId String?
+  sprintId     String?
+  title        String
+  description  String?
+  status       TaskStatus   @default(TODO)
+  priority     TaskPriority @default(MEDIUM)
+  assigneeId   String?
+  reporterId   String
+  position     Float        @default(0)
+  dueDate      DateTime?
+  storyPoints  Int?
+  completedAt  DateTime?
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+  deletedAt    DateTime?
+
+  project     Project    @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  parentTask  Task?      @relation("TaskSubtasks", fields: [parentTaskId], references: [id])
+  childTasks  Task[]     @relation("TaskSubtasks")
+  assignee    User?      @relation("TaskAssignee", fields: [assigneeId], references: [id])
+  reporter    User       @relation("TaskReporter", fields: [reporterId], references: [id])
+  sprint      Sprint?    @relation(fields: [sprintId], references: [id], onDelete: SetNull)
+  labels      TaskLabel[]
+  comments    Comment[]
+  auditLogs   AuditLog[]
+  timeEntries TimeEntry[]
+
+  @@index([projectId, status])
+  @@index([projectId, sprintId, status])
+  @@index([assigneeId])
+  @@map("tasks")
+}
+
+// ─── Sprint ─────────────────────────────────────────────────────────────────
+
+model Sprint {
+  id           String       @id @default(cuid())
+  projectId    String
+  name         String
+  goal         String?
+  status       SprintStatus @default(PLANNING)
+  startDate    DateTime?
+  endDate      DateTime?
+  completedAt  DateTime?
+  scopeAtStart Int?
+  carriedOver  Int?
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  tasks   Task[]
+
+  @@index([projectId, status])
+  @@map("sprints")
+}
+
+// ─── Label ──────────────────────────────────────────────────────────────────
+
+model Label {
+  id          String @id @default(cuid())
+  workspaceId String
+  name        String
+  color       String
+
+  workspace Workspace   @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  tasks     TaskLabel[]
+
+  @@unique([workspaceId, name])
+  @@map("labels")
+}
+
+model TaskLabel {
+  taskId  String
+  labelId String
+
+  task  Task  @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  label Label @relation(fields: [labelId], references: [id], onDelete: Cascade)
+
+  @@id([taskId, labelId])
+  @@map("task_labels")
+}
+
+// ─── Comment ────────────────────────────────────────────────────────────────
+
+model Comment {
+  id              String   @id @default(cuid())
+  taskId          String
+  authorId        String
+  parentCommentId String?
+  body            String
+  editedAt        DateTime?
+  createdAt       DateTime @default(now())
+  deletedAt       DateTime?
+
+  task          Task      @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  author        User      @relation(fields: [authorId], references: [id])
+  parentComment Comment?  @relation("CommentThread", fields: [parentCommentId], references: [id])
+  replies       Comment[] @relation("CommentThread")
+
+  @@index([taskId])
+  @@map("comments")
+}
+
+// ─── Time Entry ─────────────────────────────────────────────────────────────
+
+model TimeEntry {
+  id              String    @id @default(cuid())
+  taskId          String
+  userId          String
+  startedAt       DateTime  @default(now())
+  endedAt         DateTime?
+  durationSeconds Int?
+  createdAt       DateTime  @default(now())
+
+  task Task @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([taskId])
+  @@index([userId])
+  @@map("time_entries")
+}
+
+// ─── Audit Log ──────────────────────────────────────────────────────────────
+
+model AuditLog {
+  id           String      @id @default(cuid())
+  actorId      String
+  taskId       String?
+  resourceType String
+  resourceId   String
+  action       AuditAction
+  before       Json?
+  after        Json?
+  occurredAt   DateTime    @default(now())
+
+  actor User  @relation(fields: [actorId], references: [id])
+  task  Task? @relation(fields: [taskId], references: [id], onDelete: SetNull)
+
+  @@index([resourceType, resourceId])
+  @@index([actorId])
+  @@map("audit_logs")
+}
+
+// ─── Notification ───────────────────────────────────────────────────────────
+
+model Notification {
+  id           String           @id @default(cuid())
+  recipientId  String
+  actorId      String
+  type         NotificationType
+  resourceType String
+  resourceId   String
+  read         Boolean          @default(false)
+  readAt       DateTime?
+  createdAt    DateTime         @default(now())
+
+  recipient User @relation("NotificationRecipient", fields: [recipientId], references: [id], onDelete: Cascade)
+  actor     User @relation("NotificationActor", fields: [actorId], references: [id])
+
+  @@index([recipientId, read])
+  @@map("notifications")
+}

@@ -1,0 +1,19 @@
+{
+  "name": "flowboard",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Real-Time Collaborative Task Management Platform",
+  "scripts": {
+    "dev:api": "pnpm --filter @flowboard/api dev",
+    "dev:web": "pnpm --filter @flowboard/web dev",
+    "dev": "pnpm run --parallel dev:api dev:web",
+    "build:api": "pnpm --filter @flowboard/api build",
+    "build:web": "pnpm --filter @flowboard/web build",
+    "build": "pnpm run --parallel build:api build:web",
+    "lint": "pnpm run -r lint",
+    "db:migrate": "pnpm --filter @flowboard/api prisma:migrate",
+    "db:seed": "pnpm --filter @flowboard/api prisma:seed",
+    "db:studio": "pnpm --filter @flowboard/api prisma:studio"
+  },
+  "packageManager": "pnpm@10.33.0"
+}
