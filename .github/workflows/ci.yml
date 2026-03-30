@@ -6,6 +6,9 @@ on:
   pull_request:
     branches: [main, master]
 
+env:
+  DATABASE_URL: "postgresql://ci:ci@localhost:5432/ci?schema=public"
+
 jobs:
   lint-and-typecheck:
     name: Lint & Type Check
