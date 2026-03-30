@@ -269,7 +269,7 @@ cd apps/web && npx next dev
 
 ## About Me
 
-I'm **Jerome Jhipolito** — a senior full-stack developer based in the Philippines with 5+ years of production TypeScript. I build real-time, API-heavy systems for distributed teams. I work solo across freelance and startup projects, which means I make architecture decisions and live with the consequences.
+I'm **Jerome Jhipolito** — a full-stack developer based in the Philippines with 4 years of production TypeScript. I build real-time, API-heavy systems for distributed teams. I work solo across freelance and startup projects, which means I make architecture decisions and live with the consequences.
 
 I'm looking for **remote engineering roles** with US/EU teams working on collaboration, real-time, or platform products.
 
