@@ -14,7 +14,7 @@ export const DEMO_PROJECTS: DemoProject[] = [
   {
     id: 'demo-project-1',
     workspaceId: 'demo-workspace-1',
-    name: 'Meridian Core',
+    name: 'Lakbay Platform',
     description:
       'Core platform — API gateway, auth service, event bus, and shared infrastructure.',
     status: 'ACTIVE',

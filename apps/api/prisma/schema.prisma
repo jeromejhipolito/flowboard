@@ -118,6 +118,7 @@ model WorkspaceMembership {
   invitedBy   User?      @relation("InvitedByUser", fields: [invitedById], references: [id])
 
   @@unique([userId, workspaceId])
+  @@index([userId])
   @@map("workspace_memberships")
 }
 
@@ -175,6 +176,9 @@ model Task {
   @@index([projectId, status])
   @@index([projectId, sprintId, status])
   @@index([assigneeId])
+  @@index([completedAt])
+  @@index([createdAt])
+  @@index([dueDate, status])
   @@map("tasks")
 }
 
@@ -305,5 +309,6 @@ model Notification {
   actor     User @relation("NotificationActor", fields: [actorId], references: [id])
 
   @@index([recipientId, read])
+  @@index([recipientId, read, createdAt])
   @@map("notifications")
 }

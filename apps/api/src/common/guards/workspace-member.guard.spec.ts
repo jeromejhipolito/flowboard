@@ -50,4 +50,65 @@ describe('WorkspaceMemberGuard', () => {
     const ctx = createMockContext({ id: 'user-1' }, { id: 'non-existent-slug' });
     await expect(guard.canActivate(ctx)).rejects.toThrow(ForbiddenException);
   });
+
+  it('should use params.workspaceId when params.id is absent', async () => {
+    prisma.workspaceMembership.findUnique.mockResolvedValue({ role: 'MEMBER' });
+    const ctx = createMockContext(
+      { id: 'user-1' },
+      { workspaceId: 'cmn6yr0zw00057k7oib5t7oc3' },
+    );
+    const result = await guard.canActivate(ctx);
+    expect(result).toBe(true);
+    expect(prisma.workspaceMembership.findUnique).toHaveBeenCalledWith({
+      where: {
+        userId_workspaceId: {
+          userId: 'user-1',
+          workspaceId: 'cmn6yr0zw00057k7oib5t7oc3',
+        },
+      },
+    });
+  });
+
+  it('should set request.workspaceMembership on success', async () => {
+    const membership = { role: 'ADMIN', userId: 'user-1', workspaceId: 'ws-1' };
+    prisma.workspaceMembership.findUnique.mockResolvedValue(membership);
+    const request: any = {
+      user: { id: 'user-1' },
+      params: { id: 'cmn6yr0zw00057k7oib5t7oc3' },
+    };
+    const ctx = {
+      switchToHttp: () => ({
+        getRequest: () => request,
+      }),
+    } as unknown as ExecutionContext;
+
+    await guard.canActivate(ctx);
+
+    expect(request.workspaceMembership).toEqual(membership);
+  });
+
+  it('should return false when both params.id and params.workspaceId are absent', async () => {
+    const ctx = createMockContext({ id: 'user-1' }, {});
+    expect(await guard.canActivate(ctx)).toBe(false);
+  });
+
+  it('should skip slug resolution for valid CUID (starts with c, length > 20)', async () => {
+    prisma.workspaceMembership.findUnique.mockResolvedValue({ role: 'MEMBER' });
+    const cuid = 'cmn6yr0zw00057k7oib5t7oc3';
+    const ctx = createMockContext({ id: 'user-1' }, { id: cuid });
+
+    await guard.canActivate(ctx);
+
+    // Should NOT call workspace.findUnique for slug resolution
+    expect(prisma.workspace.findUnique).not.toHaveBeenCalled();
+    // Should directly use the CUID for membership lookup
+    expect(prisma.workspaceMembership.findUnique).toHaveBeenCalledWith({
+      where: {
+        userId_workspaceId: {
+          userId: 'user-1',
+          workspaceId: cuid,
+        },
+      },
+    });
+  });
 });

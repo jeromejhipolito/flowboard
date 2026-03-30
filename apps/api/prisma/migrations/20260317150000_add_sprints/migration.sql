@@ -1,9 +1,6 @@
 -- CreateEnum
 CREATE TYPE "SprintStatus" AS ENUM ('PLANNING', 'ACTIVE', 'CLOSED');
 
--- AlterTable
-ALTER TABLE "tasks" ADD COLUMN     "sprintId" TEXT;
-
 -- CreateTable
 CREATE TABLE "sprints" (
     "id" TEXT NOT NULL,
@@ -22,6 +19,9 @@ CREATE TABLE "sprints" (
     CONSTRAINT "sprints_pkey" PRIMARY KEY ("id")
 );
 
+-- AlterTable - add sprint reference to tasks
+ALTER TABLE "tasks" ADD COLUMN "sprintId" TEXT;
+
 -- CreateIndex
 CREATE INDEX "sprints_projectId_status_idx" ON "sprints"("projectId", "status");
 
@@ -29,7 +29,7 @@ CREATE INDEX "sprints_projectId_status_idx" ON "sprints"("projectId", "status");
 CREATE INDEX "tasks_projectId_sprintId_status_idx" ON "tasks"("projectId", "sprintId", "status");
 
 -- AddForeignKey
-ALTER TABLE "tasks" ADD CONSTRAINT "tasks_sprintId_fkey" FOREIGN KEY ("sprintId") REFERENCES "sprints"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "sprints" ADD CONSTRAINT "sprints_projectId_fkey" FOREIGN KEY ("projectId") REFERENCES "projects"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "sprints" ADD CONSTRAINT "sprints_projectId_fkey" FOREIGN KEY ("projectId") REFERENCES "projects"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "tasks" ADD CONSTRAINT "tasks_sprintId_fkey" FOREIGN KEY ("sprintId") REFERENCES "sprints"("id") ON DELETE SET NULL ON UPDATE CASCADE;

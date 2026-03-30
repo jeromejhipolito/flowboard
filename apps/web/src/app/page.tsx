@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { isDemoMode } from '@/demo';
 
 export default function HomePage() {
   return (
@@ -39,26 +40,32 @@ export default function HomePage() {
           <span className="rounded-full border border-border bg-card px-3 py-1 text-xs">AI Task Parsing</span>
         </div>
 
+        {isDemoMode && (
+          <div className="mt-6 inline-flex items-center gap-2 rounded-full border border-amber-500/30 bg-amber-500/10 px-4 py-1.5 text-sm text-amber-600 dark:text-amber-400">
+            <span className="relative flex h-2 w-2">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-amber-400 opacity-75" />
+              <span className="relative inline-flex h-2 w-2 rounded-full bg-amber-500" />
+            </span>
+            You are viewing a live demo &mdash; all data is simulated
+          </div>
+        )}
+
         <div className="mt-8 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
           <Link
-            href="/register"
+            href={isDemoMode ? '/workspaces' : '/register'}
             className="inline-flex h-12 items-center justify-center rounded-md px-10 text-base font-medium text-white shadow-sm transition-all hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring active:scale-[0.97]"
             style={{ background: 'var(--gradient-primary)' }}
           >
-            Get Started
+            {isDemoMode ? 'Explore Demo' : 'Get Started'}
           </Link>
-          <Link
-            href="/workspaces"
-            className="inline-flex h-11 items-center justify-center rounded-md border border-primary/50 bg-background px-8 text-sm font-medium text-primary shadow-sm transition-all hover:border-primary hover:bg-primary/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring active:scale-[0.97]"
-          >
-            Try Demo
-          </Link>
-          <Link
-            href="/login"
-            className="inline-flex h-11 items-center justify-center rounded-md border border-border bg-background px-8 text-sm font-medium text-foreground shadow-sm transition-all hover:border-primary/40 hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring active:scale-[0.97]"
-          >
-            Sign In
-          </Link>
+          {!isDemoMode && (
+            <Link
+              href="/login"
+              className="inline-flex h-11 items-center justify-center rounded-md border border-border bg-background px-8 text-sm font-medium text-foreground shadow-sm transition-all hover:border-primary/40 hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring active:scale-[0.97]"
+            >
+              Sign In
+            </Link>
+          )}
         </div>
 
         {/* Product screenshot placeholder */}
@@ -77,6 +84,34 @@ export default function HomePage() {
             </div>
           </div>
         </div>
+      </div>
+
+      {/* Footer — portfolio credit */}
+      <div className="absolute bottom-6 left-0 right-0 text-center">
+        <p className="text-sm text-muted-foreground">
+          Built by{' '}
+          <a
+            href="https://github.com/jeromejhipolito"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="font-medium text-primary hover:underline"
+          >
+            Jerome Jhipolito
+          </a>
+          {' '}&mdash; a portfolio project showcasing full-stack architecture &amp; real-time collaboration.
+        </p>
+        <p className="mt-1 text-xs text-muted-foreground/60">
+          NestJS &middot; Next.js 15 &middot; WebSockets &middot; PostgreSQL &middot; Redis &middot; AI
+          {' '}&middot;{' '}
+          <a
+            href="https://github.com/jeromejhipolito/flowboard"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:text-primary hover:underline"
+          >
+            View Source Code
+          </a>
+        </p>
       </div>
     </div>
   );

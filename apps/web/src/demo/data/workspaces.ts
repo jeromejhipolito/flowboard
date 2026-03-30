@@ -23,9 +23,9 @@ export interface DemoWorkspaceMember {
 
 export const DEMO_WORKSPACE: DemoWorkspace = {
   id: 'demo-workspace-1',
-  name: 'Meridian Labs',
-  slug: 'meridian-labs',
-  description: 'Building the next generation of developer tooling.',
+  name: 'Lakbay Tech',
+  slug: 'lakbay-tech',
+  description: 'Building scalable SaaS products for global remote teams.',
   memberCount: 5,
   role: 'OWNER',
 };
