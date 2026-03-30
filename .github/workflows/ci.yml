@@ -73,7 +73,7 @@ jobs:
         run: cd apps/api && npx prisma generate
 
       - name: Backend Tests (156 tests)
-        run: pnpm --filter @flowboard/api test -- --passWithNoTests
+        run: cd apps/api && npx jest --passWithNoTests
 
       - name: Frontend Tests (46 tests)
-        run: pnpm --filter @flowboard/web test -- --passWithNoTests
+        run: cd apps/web && npx jest --passWithNoTests
